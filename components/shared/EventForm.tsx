@@ -25,6 +25,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Checkbox } from "../ui/checkbox"
 import { useUploadThing } from "../lib/uploadthing"
+import { useRouter } from "next/navigation"
+import { createEvent } from "../lib/actions/event.actions"
 
 type EventFormProps = {
   userId: string,
@@ -34,6 +36,7 @@ type EventFormProps = {
 const EventForm = ({userId, type}: EventFormProps) => {
   const [files, setFiles] = useState<File[]>([])
   const initialValues = eventDefaultValues
+  const router = useRouter()
 
   const { startUpload } = useUploadThing('imageUploader')
 
@@ -51,6 +54,29 @@ const EventForm = ({userId, type}: EventFormProps) => {
 
     if (files.length > 0){
       const uploadedImages = await startUpload(files)
+
+      if (!uploadedImages) return
+
+      uploadedImageUrl = uploadedImages[0].url
+    }
+    console.log('values', values)
+    console.log('type', type)
+    if (type === 'Create'){
+      try {
+        const newEvent = await createEvent({
+          event: {...values, imageUrl: uploadedImageUrl},
+          userId,
+          path: '/profile'
+        })
+        console.log('newEvent', newEvent)
+        if (newEvent){
+          form.reset()
+          router.push(`/events/${newEvent._id}`)
+        }
+
+      } catch (error) {
+        console.log(error)
+      }
     }
   } 
 
@@ -72,7 +98,7 @@ const EventForm = ({userId, type}: EventFormProps) => {
           />
           <FormField
             control={form.control}
-            name="title"
+            name="categoryId"
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormControl>
@@ -278,7 +304,7 @@ const EventForm = ({userId, type}: EventFormProps) => {
           disabled={form.formState.isSubmitting}
           className="button col-span-2 w-full"
         >
-          {form.formState.isSubmitting ? ('Submittin...') : `${type} Event `}
+          {form.formState.isSubmitting ? ('Submitting...') : `${type} Event `}
         </Button>
       </form>
     </Form>
