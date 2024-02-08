@@ -66,9 +66,9 @@ const EventDetails = async ({params: {id}}: SearchParamProps) => {
           </div>
 
           <div className='flex flex-col gap-2'>
-            <p className='p-bold-20 text-gray-600'>What you'll learn</p>
+            <p className='p-bold-20 text-gray-600'>What you'll learn:</p>
             <p className='p-medium-16 lg:p-regular-18'>{event.descriptioin}</p>
-            <p className='p-medium-16 lg:p-regular-18 truncate text-cyan-600'>{event.url}</p>
+            <p className='p-medium-16 lg:p-regular-18 truncate text-cyan-500'>{event.url}</p>
           </div>
         </div>
       </div>
