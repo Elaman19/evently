@@ -33,7 +33,9 @@ const Collection = ({
             const hasOrderLink = collectionType === 'Events_Organized'
             const hidePrice = collectionType === 'My_Tickets'
 
-            return 0
+            return (
+              <li key={event._id} className='flex justify-center'>{}</li>
+            )
           })}
         </ul>
       </div>
