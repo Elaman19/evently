@@ -1,13 +1,21 @@
-import { getEventById } from '@/components/lib/actions/event.actions'
+import { getEventById, getRelatedEventsByCategory } from '@/components/lib/actions/event.actions'
 import { formatDateTime } from '@/components/lib/utils'
+import Collection from '@/components/shared/Collection'
 import { SearchParamProps } from '@/types'
 import Image from 'next/image'
 import React from 'react'
 
-const EventDetails = async ({params: {id}}: SearchParamProps) => {
+const EventDetails = async ({params: {id}, searchParams}: SearchParamProps) => {
   const event = await getEventById(id)
 
+  const relatedEvents = await getRelatedEventsByCategory({
+    categoryId: event.category._id,
+    eventId: event._id,
+    page: searchParams.page as string
+  })
+
   return (
+    <>
     <section className='flex justify-center bg-primary-50 bg-dotted-pattern bg-contain'>
       <div className='grid grid-cols-1 md:grid-cols-2 2xl:max-w-7xl'>
         <Image 
@@ -67,12 +75,28 @@ const EventDetails = async ({params: {id}}: SearchParamProps) => {
 
           <div className='flex flex-col gap-2'>
             <p className='p-bold-20 text-gray-600'>What you'll learn:</p>
-            <p className='p-medium-16 lg:p-regular-18'>{event.descriptioin}</p>
+            <p className='p-medium-16 lg:p-regular-18'>{event.description}</p>
             <p className='p-medium-16 lg:p-regular-18 truncate text-cyan-500'>{event.url}</p>
           </div>
         </div>
       </div>
     </section>
+
+    {/* events with the same category */}
+    <section className='wrapper my-8 flex flex-col gap-8 md:gap-12'>
+      <h2 className='h2-bald'>Related events</h2>
+
+      <Collection
+        data={relatedEvents?.data}
+        emptyTitle='No events found'
+        emptyStateSubtext='Come back later'
+        collectionType='All_Events'
+        limit={6}
+        page={1}
+        totalPages={2}
+      />
+    </section>
+    </>
   )
 }
 
