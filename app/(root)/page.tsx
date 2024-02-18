@@ -1,4 +1,5 @@
 import { getAllEvents } from "@/components/lib/actions/event.actions"
+import CategoryFilter from "@/components/shared/CategoryFilter"
 import Collection from "@/components/shared/Collection"
 import Search from "@/components/shared/Search"
 import { Button } from "@/components/ui/button"
@@ -50,7 +51,7 @@ export default async function Home({ searchParams }: SearchParamProps) {
         </h2>
         <div className="flex w-full flex-col gap-5 md:flex-row">
           <Search />
-          Category filter
+          <CategoryFilter />
         </div>
 
         <Collection 
@@ -59,8 +60,8 @@ export default async function Home({ searchParams }: SearchParamProps) {
           emptyStateSubtext='Come back later'
           collectionType='All_Events'
           limit={6}
-          page={1}
-          totalPages={2}
+          page={page}
+          totalPages={events?.totalPages}
         />
       </section>
     </>
